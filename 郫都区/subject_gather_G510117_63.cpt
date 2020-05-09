@@ -1,0 +1,1087 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<WorkBook xmlVersion="20170715" releaseVersion="8.0.0">
+<TableDataMap>
+<TableData name="郫都区统计" class="com.fr.data.impl.DBTableData">
+<Parameters>
+<Parameter>
+<Attributes name="period_begin"/>
+<O>
+<![CDATA[2019-01]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="subject"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+</Parameters>
+<Attributes maxMemRowCount="-1"/>
+<Connection class="com.fr.data.impl.NameDatabaseConnection">
+<DatabaseName>
+<![CDATA[REPORTJDBC]]></DatabaseName>
+</Connection>
+<Query>
+<![CDATA[SELECT period ,aug,acg,case when direction='Debit' then sum(accrual_org)*1 when direction='Credit' then sum(accrual_org)*0 , ,ack.name 单位名称,accbook FROM `rpt_ps_accrual` rpa
+left join bd_accbook ack on rpa.accbook = ack.id
+
+where 1=1 
+      ${if(len(period_begin) = 0,"","and rpa.period <'" + period_begin + "' ")}
+      ${if(len(subject) = 0,"","and rpa.accsubject_code like '" + subject + "%' ")}
+      and rpa.accbook in (select id from bd_accbook where code like "G510117%")
+ group by ack.id]]></Query>
+</TableData>
+<TableData name="郫都区基准科目" class="com.fr.data.impl.DBTableData">
+<Parameters/>
+<Attributes maxMemRowCount="-1"/>
+<Connection class="com.fr.data.impl.NameDatabaseConnection">
+<DatabaseName>
+<![CDATA[REPORTJDBC]]></DatabaseName>
+</Connection>
+<Query>
+<![CDATA[SELECT acj.code,acj.name ,concat(acj.name,'(',acj.code,')') 显示名称 FROM `bd_accsubject` acj left join
+bd_accsubjectchart acjc on acj.accsubjectchart = acjc.id where acjc.code = 'G510117000000']]></Query>
+</TableData>
+<TableData name="会计期间" class="com.fr.data.impl.DBTableData">
+<Parameters/>
+<Attributes maxMemRowCount="-1"/>
+<Connection class="com.fr.data.impl.NameDatabaseConnection">
+<DatabaseName>
+<![CDATA[REPORTJDBC]]></DatabaseName>
+</Connection>
+<Query>
+<![CDATA[SELECT DISTINCT
+    accperiod.id,
+    accperiod.code,
+    accperiod.name,
+    accperiod.accperiodscheme,
+    accperiod.accperiodyear,
+    accperiod.accperiodyear2
+FROM
+    bd_accperiod accperiod
+JOIN
+    bd_accbook accbook
+ON
+    accperiod.accperiodscheme=accbook.accperiodscheme
+AND accbook.code like "G510117%"
+JOIN
+    bd_accperiod accperiod2
+ON
+    accbook.accperiod=accperiod2.id
+AND accperiod.code>=accperiod2.code
+order by accperiod.code]]></Query>
+</TableData>
+<TableData name="期初" class="com.fr.data.impl.DBTableData">
+<Parameters>
+<Parameter>
+<Attributes name="period_start"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="subject"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+</Parameters>
+<Attributes maxMemRowCount="-1"/>
+<Connection class="com.fr.data.impl.NameDatabaseConnection">
+<DatabaseName>
+<![CDATA[REPORTJDBC]]></DatabaseName>
+</Connection>
+<Query>
+<![CDATA[
+select a.借方 + b.期初借方 借,a.贷方 + b.期初贷方 贷,a.name from 
+(SELECT period ,sum(debit_org) 借方,sum(credit_org) 贷方,ack.shortname name,accbook FROM `rpt_ps_voucher` rpa
+left join bd_accbook ack on rpa.accbook = ack.id
+where 1=1 
+      ${if(len(subject) = 0,"","and rpa.accsubject_code like '" + subject + "%' ")}
+      ${if(len(period_start) = 0,"","and rpa.period <='" + period_start + "' ")}
+      and rpa.accbook in (select id from bd_accbook where code like "G510117%")
+ group by ack.id) a
+
+left join 
+ (SELECT fb.accbook accbook,fb.period,ack.shortname,sbj.code,sum(fb.creditamount) 期初贷方,sum(fb.debitamount) 期初借方 FROM `fi_balance` fb left join bd_accsubject sbj on fb.accsubject = sbj.id
+left join bd_accbook ack on fb.accbook = ack.id
+where 1=1 
+and fb.flag in (00,01)
+      ${if(len(subject) = 0,"","and sbj.code like '" + subject + "%' ")}
+
+and ack.code like "G510117%"
+group by fb.accbook ) b  on a.accbook = b.accbook
+
+
+
+
+
+
+
+
+ 
+ ]]></Query>
+</TableData>
+<TableData name="期末" class="com.fr.data.impl.DBTableData">
+<Parameters>
+<Parameter>
+<Attributes name="period_end"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="subject"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+</Parameters>
+<Attributes maxMemRowCount="-1"/>
+<Connection class="com.fr.data.impl.NameDatabaseConnection">
+<DatabaseName>
+<![CDATA[REPORTJDBC]]></DatabaseName>
+</Connection>
+<Query>
+<![CDATA[
+ SELECT period ,sum(accrual_org) 期初,ack.name 单位名称 FROM `rpt_ps_accrual` rpa
+left join bd_accbook ack on rpa.accbook = ack.id
+
+where 1=1 
+      ${if(len(period_end) = 0,"","and rpa.period <='" + period_end + "' ")}
+      ${if(len(subject) = 0,"","and rpa.accsubject_code like '" + subject + "%' ")}
+      and rpa.accbook in (select id from bd_accbook where code like "G510117%")
+ group by ack.id
+ ]]></Query>
+</TableData>
+<TableData name="期间所有" class="com.fr.data.impl.DBTableData">
+<Parameters>
+<Parameter>
+<Attributes name="period_begin"/>
+<O>
+<![CDATA[2018-01]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="period_end"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="subject"/>
+<O>
+<![CDATA[1001]]></O>
+</Parameter>
+</Parameters>
+<Attributes maxMemRowCount="-1"/>
+<Connection class="com.fr.data.impl.NameDatabaseConnection">
+<DatabaseName>
+<![CDATA[REPORTJDBC]]></DatabaseName>
+</Connection>
+<Query>
+<![CDATA[ SELECT sum(credit_org) 贷方, sum(debit_org) 借方 ,period ,ack.name 单位名称,accbook FROM `rpt_ps_accrual` rpa
+left join bd_accbook ack on rpa.accbook = ack.id
+where 1=1 
+      ${if(len(period_begin) = 0,"","and rpa.period >='" + period_begin + "' ")}
+        ${if(len(period_end) = 0,"","and rpa.period <= '" + period_end + "' ")}
+      ${if(len(subject) = 0,"","and rpa.accsubject_code like '" + subject + "%' ")}
+      and rpa.accbook in (select id from bd_accbook where code like "G510117%")
+  group by accbook]]></Query>
+</TableData>
+<TableData name="显示科目" class="com.fr.data.impl.DBTableData">
+<Parameters>
+<Parameter>
+<Attributes name="subject"/>
+<O>
+<![CDATA[1001]]></O>
+</Parameter>
+</Parameters>
+<Attributes maxMemRowCount="-1"/>
+<Connection class="com.fr.data.impl.NameDatabaseConnection">
+<DatabaseName>
+<![CDATA[REPORTJDBC]]></DatabaseName>
+</Connection>
+<Query>
+<![CDATA[SELECT acj.code,acj.name ,concat('科目名称:',acj.name,'(',acj.code,')') 显示名称 FROM `bd_accsubject` acj left join
+bd_accsubjectchart acjc on acj.accsubjectchart = acjc.id where acjc.code = 'G510117000000'
+      ${if(len(subject) = 0,"and acj.code = '***'","and acj.code ='" + subject + "' ")}
+
+      limit 1
+ ]]></Query>
+</TableData>
+</TableDataMap>
+<ReportWebAttr>
+<ServerPrinter/>
+<WebViewContent>
+<ToolBars>
+<ToolBarManager>
+<Location>
+<Embed position="1"/>
+</Location>
+<ToolBar>
+<Widget class="com.fr.report.web.button.PageSetup">
+<WidgetAttr description="">
+<PrivilegeControl/>
+</WidgetAttr>
+<Text>
+<![CDATA[${i18n('PageSetup-Page_Setup')}]]></Text>
+<IconName>
+<![CDATA[pagesetup]]></IconName>
+</Widget>
+<Widget class="com.fr.report.web.button.PrintPreview">
+<WidgetAttr description="">
+<PrivilegeControl/>
+</WidgetAttr>
+<Text>
+<![CDATA[${i18n('PrintP-Print_Preview')}]]></Text>
+<IconName>
+<![CDATA[preview]]></IconName>
+</Widget>
+<Widget class="com.fr.report.web.button.FlashPrint">
+<WidgetAttr description="">
+<PrivilegeControl/>
+</WidgetAttr>
+<Text>
+<![CDATA[${i18n('FR-Engine_Utils_Flash_Print[Client]A')}]]></Text>
+<IconName>
+<![CDATA[flashprint]]></IconName>
+</Widget>
+<Widget class="com.fr.report.web.button.Print">
+<WidgetAttr description="">
+<PrivilegeControl/>
+</WidgetAttr>
+<Text>
+<![CDATA[${i18n('Print')}]]></Text>
+<IconName>
+<![CDATA[print]]></IconName>
+<PrintButtons/>
+</Widget>
+<Widget class="com.fr.report.web.button.Export">
+<WidgetAttr description="">
+<PrivilegeControl/>
+</WidgetAttr>
+<Text>
+<![CDATA[${i18n('Export')}]]></Text>
+<IconName>
+<![CDATA[export]]></IconName>
+<Buttons pdf="true" excelP="true" excelO="true" excelS="true" word="true" image="true" html="true"/>
+</Widget>
+<Widget class="com.fr.report.web.button.Email">
+<WidgetAttr description="">
+<PrivilegeControl/>
+</WidgetAttr>
+<Text>
+<![CDATA[${i18n('Email')}]]></Text>
+<IconName>
+<![CDATA[email]]></IconName>
+</Widget>
+</ToolBar>
+</ToolBarManager>
+<ToolBarManager>
+<Location>
+<Embed position="3"/>
+</Location>
+<ToolBar>
+<Widget class="com.fr.report.web.button.PDFPrint">
+<WidgetAttr description="">
+<PrivilegeControl/>
+</WidgetAttr>
+<Text>
+<![CDATA[${i18n('FR-Engine_Utils_PDF_Print[Client]A')}]]></Text>
+<IconName>
+<![CDATA[pdfprint]]></IconName>
+</Widget>
+<Widget class="com.fr.report.web.button.PDFPrint">
+<WidgetAttr description="">
+<PrivilegeControl/>
+</WidgetAttr>
+<Text>
+<![CDATA[${i18n('FR-Engine_Utils_PDF_Print[Client]A')}]]></Text>
+<IconName>
+<![CDATA[pdfprint]]></IconName>
+</Widget>
+<Widget class="com.fr.report.web.button.PDFPrint">
+<WidgetAttr description="">
+<PrivilegeControl/>
+</WidgetAttr>
+<Text>
+<![CDATA[${i18n('FR-Engine_Utils_PDF_Print[Client]A')}]]></Text>
+<IconName>
+<![CDATA[pdfprint]]></IconName>
+</Widget>
+<Widget class="com.fr.report.web.button.Print">
+<WidgetAttr description="">
+<PrivilegeControl/>
+</WidgetAttr>
+<Text>
+<![CDATA[${i18n('Print')}]]></Text>
+<IconName>
+<![CDATA[print]]></IconName>
+<PrintButtons/>
+</Widget>
+</ToolBar>
+</ToolBarManager>
+</ToolBars>
+<SortFuncCheck check="true"/>
+<ConditionFuncCheck check="true"/>
+<ListFuncCheck check="true"/>
+</WebViewContent>
+</ReportWebAttr>
+<Report class="com.fr.report.worksheet.WorkSheet" name="sheet1">
+<ReportPageAttr>
+<HR/>
+<FR/>
+<HC/>
+<FC/>
+</ReportPageAttr>
+<ColumnPrivilegeControl/>
+<RowPrivilegeControl/>
+<RowHeight defaultValue="723900">
+<![CDATA[1790700,1143000,914400,838200,723900,1008000,723900,723900,723900,723900,723900]]></RowHeight>
+<ColumnWidth defaultValue="2743200">
+<![CDATA[7048500,3600000,3600000,3600000,3600000,3600000,3600000,3600000,3600000,0,2743200]]></ColumnWidth>
+<CellElementList>
+<C c="0" r="0" cs="9" s="0">
+<O>
+<![CDATA[郫都区供销合作社联合社财务数据汇总查询表]]></O>
+<PrivilegeControl/>
+<CellGUIAttr showAsDefault="true"/>
+<CellPageAttr/>
+<Expand/>
+</C>
+<C c="9" r="0">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=accbooklist($aid,$tid,$userid)]]></Attributes>
+</O>
+<PrivilegeControl/>
+<Expand/>
+</C>
+<C c="0" r="1" s="1">
+<O t="DSColumn">
+<Attributes dsName="显示科目" columnName="显示名称"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<PrivilegeControl/>
+<CellPageAttr/>
+<Expand dir="0"/>
+</C>
+<C c="1" r="1">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=if($period_begin>$period_end,'（错误）输入起始时间大于结束时间','')]]></Attributes>
+</O>
+<PrivilegeControl/>
+<CellPageAttr/>
+<Expand dir="0"/>
+</C>
+<C c="2" r="1" cs="3" s="2">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[="会计期间：" + $period_begin + "至" + $period_end]]></Attributes>
+</O>
+<PrivilegeControl/>
+<CellPageAttr/>
+<Expand/>
+</C>
+<C c="5" r="1">
+<PrivilegeControl/>
+<CellPageAttr/>
+<Expand/>
+</C>
+<C c="6" r="1">
+<PrivilegeControl/>
+<CellPageAttr/>
+<Expand/>
+</C>
+<C c="7" r="1" cs="2" s="3">
+<O>
+<![CDATA[金额单位：元]]></O>
+<PrivilegeControl/>
+<CellPageAttr/>
+<Expand/>
+</C>
+<C c="0" r="2" rs="2" s="4">
+<O>
+<![CDATA[单位名称]]></O>
+<PrivilegeControl/>
+<CellPageAttr/>
+<Expand/>
+</C>
+<C c="1" r="2" cs="2" s="5">
+<O>
+<![CDATA[期初余额]]></O>
+<PrivilegeControl/>
+<CellPageAttr/>
+<Expand/>
+</C>
+<C c="3" r="2" cs="2" s="5">
+<O>
+<![CDATA[本期发生额]]></O>
+<PrivilegeControl/>
+<CellPageAttr/>
+<Expand/>
+</C>
+<C c="5" r="2" cs="2" s="5">
+<O>
+<![CDATA[期间累计]]></O>
+<PrivilegeControl/>
+<CellPageAttr/>
+<Expand/>
+</C>
+<C c="7" r="2" cs="2" s="5">
+<O>
+<![CDATA[期末余额]]></O>
+<PrivilegeControl/>
+<CellPageAttr/>
+<Expand/>
+</C>
+<C c="1" r="3" s="5">
+<O>
+<![CDATA[借方]]></O>
+<PrivilegeControl/>
+<CellPageAttr/>
+<Expand/>
+</C>
+<C c="2" r="3" s="5">
+<O>
+<![CDATA[贷方]]></O>
+<PrivilegeControl/>
+<CellPageAttr/>
+<Expand/>
+</C>
+<C c="3" r="3" s="5">
+<O>
+<![CDATA[借方]]></O>
+<PrivilegeControl/>
+<CellPageAttr/>
+<Expand/>
+</C>
+<C c="4" r="3" s="5">
+<O>
+<![CDATA[贷方]]></O>
+<PrivilegeControl/>
+<CellPageAttr/>
+<Expand/>
+</C>
+<C c="5" r="3" s="5">
+<O>
+<![CDATA[借方]]></O>
+<PrivilegeControl/>
+<CellPageAttr/>
+<Expand/>
+</C>
+<C c="6" r="3" s="5">
+<O>
+<![CDATA[贷方]]></O>
+<PrivilegeControl/>
+<CellPageAttr/>
+<Expand/>
+</C>
+<C c="7" r="3" s="5">
+<O>
+<![CDATA[借方]]></O>
+<PrivilegeControl/>
+<CellPageAttr/>
+<Expand/>
+</C>
+<C c="8" r="3" s="5">
+<O>
+<![CDATA[贷方]]></O>
+<PrivilegeControl/>
+<CellPageAttr/>
+<Expand/>
+</C>
+<C c="0" r="4" s="6">
+<O t="DSColumn">
+<Attributes dsName="期初" columnName="name"/>
+<Condition class="com.fr.data.condition.CommonCondition">
+<CNUMBER>
+<![CDATA[0]]></CNUMBER>
+<CNAME>
+<![CDATA[accbook]]></CNAME>
+<Compare op="12">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=
+accbooklist($aid,$tid,$userid)]]></Attributes>
+</O>
+</Compare>
+</Condition>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Result>
+<![CDATA[$$$]]></Result>
+<Parameters/>
+</O>
+<PrivilegeControl/>
+<CellPageAttr/>
+<Expand dir="0"/>
+</C>
+<C c="1" r="4" s="7">
+<O t="DSColumn">
+<Attributes dsName="期初" columnName="借"/>
+<Condition class="com.fr.data.condition.ListCondition"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper">
+<Attr divideMode="1"/>
+</RG>
+<Result>
+<![CDATA[$$$]]></Result>
+<Parameters/>
+</O>
+<PrivilegeControl/>
+<CellPageAttr/>
+<Expand dir="0"/>
+</C>
+<C c="2" r="4" s="7">
+<O t="DSColumn">
+<Attributes dsName="期初" columnName="贷"/>
+<Condition class="com.fr.data.condition.ListCondition"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper">
+<Attr divideMode="1"/>
+</RG>
+<Result>
+<![CDATA[$$$]]></Result>
+<Parameters/>
+</O>
+<PrivilegeControl/>
+<CellPageAttr/>
+<Expand dir="0"/>
+</C>
+<C c="3" r="4" s="7">
+<O t="DSColumn">
+<Attributes dsName="期初" columnName="本期借方"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<PrivilegeControl/>
+<CellPageAttr/>
+<Expand dir="0"/>
+</C>
+<C c="4" r="4" s="7">
+<O t="DSColumn">
+<Attributes dsName="期初" columnName="本期贷方"/>
+<Condition class="com.fr.data.condition.ListCondition"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Result>
+<![CDATA[$$$]]></Result>
+<Parameters/>
+</O>
+<PrivilegeControl/>
+<CellPageAttr/>
+<Expand dir="0"/>
+</C>
+<C c="5" r="4" s="7">
+<O t="DSColumn">
+<Attributes dsName="期初" columnName="借方"/>
+<Condition class="com.fr.data.condition.ListCondition"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Result>
+<![CDATA[$$$]]></Result>
+<Parameters/>
+</O>
+<PrivilegeControl/>
+<CellPageAttr/>
+<Expand dir="0"/>
+</C>
+<C c="6" r="4" s="7">
+<O t="DSColumn">
+<Attributes dsName="期初" columnName="贷方"/>
+<Condition class="com.fr.data.condition.ListCondition"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Result>
+<![CDATA[$$$]]></Result>
+<Parameters/>
+</O>
+<PrivilegeControl/>
+<CellPageAttr/>
+<Expand dir="0"/>
+</C>
+<C c="7" r="4" s="7">
+<O t="DSColumn">
+<Attributes dsName="期初" columnName="期末借方"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<PrivilegeControl/>
+<CellPageAttr/>
+<Expand dir="0"/>
+</C>
+<C c="8" r="4" s="7">
+<O t="DSColumn">
+<Attributes dsName="期初" columnName="期末贷方"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<PrivilegeControl/>
+<CellPageAttr/>
+<Expand dir="0"/>
+</C>
+<C c="0" r="5" s="8">
+<O>
+<![CDATA[合   计]]></O>
+<PrivilegeControl/>
+<CellPageAttr/>
+<Expand/>
+</C>
+<C c="1" r="5" s="9">
+<O t="DSColumn">
+<Attributes dsName="期初" columnName="借"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<PrivilegeControl/>
+<CellPageAttr/>
+<Expand dir="0"/>
+</C>
+<C c="2" r="5" s="9">
+<O t="DSColumn">
+<Attributes dsName="期初" columnName="贷"/>
+<Complex/>
+<Parameters/>
+</O>
+<PrivilegeControl/>
+<CellPageAttr/>
+<Expand dir="0"/>
+</C>
+<C c="3" r="5" s="9">
+<O t="DSColumn">
+<Attributes dsName="期初" columnName="本期借方"/>
+<Condition class="com.fr.data.condition.ListCondition"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.SummaryGrouper">
+<FN>
+<![CDATA[com.fr.data.util.function.SumFunction]]></FN>
+</RG>
+<Result>
+<![CDATA[$$$]]></Result>
+<Parameters/>
+</O>
+<PrivilegeControl/>
+<CellPageAttr/>
+<Expand/>
+</C>
+<C c="4" r="5" s="9">
+<O t="DSColumn">
+<Attributes dsName="期初" columnName="本期贷方"/>
+<Condition class="com.fr.data.condition.ListCondition"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.SummaryGrouper">
+<FN>
+<![CDATA[com.fr.data.util.function.SumFunction]]></FN>
+</RG>
+<Result>
+<![CDATA[$$$]]></Result>
+<Parameters/>
+</O>
+<PrivilegeControl/>
+<CellPageAttr/>
+<Expand/>
+</C>
+<C c="5" r="5" s="9">
+<O t="DSColumn">
+<Attributes dsName="期初" columnName="借方"/>
+<Condition class="com.fr.data.condition.ListCondition"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.SummaryGrouper">
+<FN>
+<![CDATA[com.fr.data.util.function.SumFunction]]></FN>
+</RG>
+<Result>
+<![CDATA[$$$]]></Result>
+<Parameters/>
+</O>
+<PrivilegeControl/>
+<CellPageAttr/>
+<Expand/>
+</C>
+<C c="6" r="5" s="9">
+<O t="DSColumn">
+<Attributes dsName="期初" columnName="贷方"/>
+<Condition class="com.fr.data.condition.ListCondition"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.SummaryGrouper">
+<FN>
+<![CDATA[com.fr.data.util.function.SumFunction]]></FN>
+</RG>
+<Result>
+<![CDATA[$$$]]></Result>
+<Parameters/>
+</O>
+<PrivilegeControl/>
+<CellPageAttr/>
+<Expand/>
+</C>
+<C c="7" r="5" s="9">
+<O t="DSColumn">
+<Attributes dsName="期初" columnName="期末借方"/>
+<Condition class="com.fr.data.condition.ListCondition"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.SummaryGrouper">
+<FN>
+<![CDATA[com.fr.data.util.function.SumFunction]]></FN>
+</RG>
+<Result>
+<![CDATA[$$$]]></Result>
+<Parameters/>
+</O>
+<PrivilegeControl/>
+<CellPageAttr/>
+<Expand dir="0"/>
+</C>
+<C c="8" r="5" s="9">
+<O t="DSColumn">
+<Attributes dsName="期初" columnName="期末贷方"/>
+<Condition class="com.fr.data.condition.ListCondition"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.SummaryGrouper">
+<FN>
+<![CDATA[com.fr.data.util.function.SumFunction]]></FN>
+</RG>
+<Result>
+<![CDATA[$$$]]></Result>
+<Parameters/>
+</O>
+<PrivilegeControl/>
+<CellPageAttr/>
+<Expand/>
+</C>
+<C c="0" r="6">
+<PrivilegeControl/>
+<Expand/>
+</C>
+<C c="3" r="9" s="10">
+<PrivilegeControl/>
+<Expand/>
+</C>
+</CellElementList>
+<ReportAttrSet>
+<ReportSettings isHorizontalCenterOnPage="true" headerHeight="0" footerHeight="0">
+<PaperSetting orientation="1">
+<Margin top="986400" left="151200" bottom="986400" right="151200"/>
+</PaperSetting>
+</ReportSettings>
+<Header reportPageType="0">
+<Background name="NullBackground"/>
+<LeftList/>
+<CenterList/>
+<RightList/>
+</Header>
+<Footer reportPageType="0">
+<Background name="NullBackground"/>
+<LeftList/>
+<CenterList/>
+<RightList/>
+</Footer>
+</ReportAttrSet>
+<PrivilegeControl/>
+</Report>
+<ReportParameterAttr>
+<Attributes showWindow="true" delayPlaying="true" windowPosition="1" align="0"/>
+<PWTitle>
+<![CDATA[参数]]></PWTitle>
+<ParameterUI class="com.fr.form.main.parameter.FormParameterUI">
+<Parameters/>
+<Layout class="com.fr.form.ui.container.WParameterLayout">
+<WidgetName name="para"/>
+<WidgetAttr description="">
+<PrivilegeControl/>
+</WidgetAttr>
+<Margin top="0" left="0" bottom="0" right="0"/>
+<Border>
+<border style="0" color="-723724" borderRadius="0" type="0" borderStyle="0"/>
+<WidgetTitle>
+<O>
+<![CDATA[新建标题]]></O>
+<FRFont name="SimSun" style="0" size="72"/>
+<Position pos="0"/>
+</WidgetTitle>
+<Alpha alpha="1.0"/>
+</Border>
+<Background name="ColorBackground" color="-1118482"/>
+<LCAttr vgap="0" hgap="0" compInterval="0"/>
+<Widget class="com.fr.form.ui.container.WAbsoluteLayout$BoundsWidget">
+<InnerWidget class="com.fr.form.ui.CheckBox">
+<WidgetName name="istally_c"/>
+<WidgetAttr description="">
+<PrivilegeControl/>
+</WidgetAttr>
+<Text>
+<![CDATA[是否包含未记账]]></Text>
+<widgetValue>
+<O t="B">
+<![CDATA[false]]></O>
+</widgetValue>
+</InnerWidget>
+<BoundsAttr x="861" y="11" width="188" height="28"/>
+</Widget>
+<Widget class="com.fr.form.ui.container.WAbsoluteLayout$BoundsWidget">
+<InnerWidget class="com.fr.form.ui.ComboBox">
+<WidgetName name="period_end"/>
+<WidgetAttr description="">
+<PrivilegeControl/>
+</WidgetAttr>
+<EMSG>
+<![CDATA[期末时间不为空]]></EMSG>
+<allowBlank>
+<![CDATA[false]]></allowBlank>
+<Dictionary class="com.fr.data.impl.TableDataDictionary">
+<FormulaDictAttr kiName="name" viName="name"/>
+<TableDataDictAttr>
+<TableData class="com.fr.data.impl.NameTableData">
+<Name>
+<![CDATA[会计期间]]></Name>
+</TableData>
+</TableDataDictAttr>
+</Dictionary>
+<widgetValue/>
+</InnerWidget>
+<BoundsAttr x="718" y="11" width="117" height="28"/>
+</Widget>
+<Widget class="com.fr.form.ui.container.WAbsoluteLayout$BoundsWidget">
+<InnerWidget class="com.fr.form.ui.Label">
+<WidgetName name="Labelperiod_end"/>
+<WidgetAttr description="">
+<PrivilegeControl/>
+</WidgetAttr>
+<widgetValue>
+<O>
+<![CDATA[至:]]></O>
+</widgetValue>
+<LabelAttr verticalcenter="true" textalign="0" autoline="true"/>
+<FRFont name="SimSun" style="0" size="72"/>
+<border style="0" color="-723724"/>
+</InnerWidget>
+<BoundsAttr x="684" y="11" width="34" height="28"/>
+</Widget>
+<Widget class="com.fr.form.ui.container.WAbsoluteLayout$BoundsWidget">
+<InnerWidget class="com.fr.form.ui.ComboBox">
+<WidgetName name="period_begin"/>
+<WidgetAttr description="">
+<PrivilegeControl/>
+</WidgetAttr>
+<EMSG>
+<![CDATA[输入开始时间]]></EMSG>
+<allowBlank>
+<![CDATA[false]]></allowBlank>
+<Dictionary class="com.fr.data.impl.TableDataDictionary">
+<FormulaDictAttr kiName="name" viName="name"/>
+<TableDataDictAttr>
+<TableData class="com.fr.data.impl.NameTableData">
+<Name>
+<![CDATA[会计期间]]></Name>
+</TableData>
+</TableDataDictAttr>
+</Dictionary>
+<widgetValue/>
+</InnerWidget>
+<BoundsAttr x="558" y="11" width="126" height="28"/>
+</Widget>
+<Widget class="com.fr.form.ui.container.WAbsoluteLayout$BoundsWidget">
+<InnerWidget class="com.fr.form.ui.Label">
+<WidgetName name="Labelperiod_begin"/>
+<WidgetAttr description="">
+<PrivilegeControl/>
+</WidgetAttr>
+<widgetValue>
+<O>
+<![CDATA[期间:]]></O>
+</widgetValue>
+<LabelAttr verticalcenter="true" textalign="0" autoline="true"/>
+<FRFont name="SimSun" style="0" size="72"/>
+<border style="0" color="-723724"/>
+</InnerWidget>
+<BoundsAttr x="478" y="11" width="80" height="28"/>
+</Widget>
+<Widget class="com.fr.form.ui.container.WAbsoluteLayout$BoundsWidget">
+<InnerWidget class="com.fr.form.parameter.FormSubmitButton">
+<WidgetName name="Search"/>
+<WidgetAttr description="">
+<PrivilegeControl/>
+</WidgetAttr>
+<Text>
+<![CDATA[查询]]></Text>
+<Hotkeys>
+<![CDATA[enter]]></Hotkeys>
+</InnerWidget>
+<BoundsAttr x="1087" y="11" width="139" height="28"/>
+</Widget>
+<Widget class="com.fr.form.ui.container.WAbsoluteLayout$BoundsWidget">
+<InnerWidget class="com.fr.form.ui.ComboBox">
+<WidgetName name="subject"/>
+<WidgetAttr description="">
+<PrivilegeControl/>
+</WidgetAttr>
+<EMSG>
+<![CDATA[会计科目名称不能为空]]></EMSG>
+<allowBlank>
+<![CDATA[false]]></allowBlank>
+<noRepeat>
+<![CDATA[false]]></noRepeat>
+<Dictionary class="com.fr.data.impl.TableDataDictionary">
+<FormulaDictAttr kiName="code" viName="显示名称"/>
+<TableDataDictAttr>
+<TableData class="com.fr.data.impl.NameTableData">
+<Name>
+<![CDATA[郫都区基准科目]]></Name>
+</TableData>
+</TableDataDictAttr>
+</Dictionary>
+<widgetValue>
+<O>
+<![CDATA[]]></O>
+</widgetValue>
+</InnerWidget>
+<BoundsAttr x="130" y="11" width="314" height="28"/>
+</Widget>
+<Widget class="com.fr.form.ui.container.WAbsoluteLayout$BoundsWidget">
+<InnerWidget class="com.fr.form.ui.Label">
+<WidgetName name="Labelsubject"/>
+<WidgetAttr description="">
+<PrivilegeControl/>
+</WidgetAttr>
+<widgetValue>
+<O>
+<![CDATA[会计科目:]]></O>
+</widgetValue>
+<LabelAttr verticalcenter="true" textalign="0" autoline="true"/>
+<FRFont name="SimSun" style="0" size="72"/>
+<border style="0" color="-723724"/>
+</InnerWidget>
+<BoundsAttr x="50" y="11" width="80" height="28"/>
+</Widget>
+<Sorted sorted="false"/>
+<MobileWidgetList>
+<Widget widgetName="subject"/>
+<Widget widgetName="period_begin"/>
+<Widget widgetName="period_end"/>
+<Widget widgetName="istally_c"/>
+</MobileWidgetList>
+<Display display="true"/>
+<DelayDisplayContent delay="true"/>
+<Position position="0"/>
+<Design_Width design_width="1420"/>
+<NameTagModified/>
+<WidgetNameTagMap>
+<NameTag name="period_begin" tag="期间:"/>
+<NameTag name="period_end" tag="至:"/>
+<NameTag name="subject" tag="会计科目:"/>
+</WidgetNameTagMap>
+</Layout>
+<DesignAttr width="1420" height="51"/>
+</ParameterUI>
+<Parameter>
+<Attributes name="subject"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="period_begin"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="period_end"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+</ReportParameterAttr>
+<StyleList>
+<Style horizontal_alignment="0" imageLayout="1" paddingLeft="12" paddingRight="12">
+<FRFont name="微软雅黑" style="0" size="128"/>
+<Background name="ColorBackground" color="-1"/>
+<Border/>
+</Style>
+<Style imageLayout="1">
+<FRFont name="SimSun" style="0" size="64"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="SimSun" style="0" size="72"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style horizontal_alignment="4" imageLayout="1">
+<FRFont name="SimSun" style="0" size="72"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="SimSun" style="1" size="64"/>
+<Background name="ColorBackground" color="-1"/>
+<Border>
+<Top style="1" color="-16777216"/>
+<Bottom style="1" color="-16777216"/>
+<Left style="1" color="-16777216"/>
+<Right style="1" color="-16777216"/>
+</Border>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="SimSun" style="1" size="72"/>
+<Background name="ColorBackground" color="-1"/>
+<Border>
+<Top style="1" color="-16777216"/>
+<Bottom style="1" color="-16777216"/>
+<Left style="1" color="-16777216"/>
+<Right style="1" color="-16777216"/>
+</Border>
+</Style>
+<Style imageLayout="1">
+<FRFont name="SimSun" style="0" size="64"/>
+<Background name="NullBackground"/>
+<Border>
+<Top style="1" color="-16777216"/>
+<Bottom style="1" color="-16777216"/>
+<Left style="1" color="-16777216"/>
+<Right style="1" color="-16777216"/>
+</Border>
+</Style>
+<Style imageLayout="1">
+<Format class="com.fr.base.CoreDecimalFormat">
+<![CDATA[#,##0.00]]></Format>
+<FRFont name="SimSun" style="0" size="72"/>
+<Background name="NullBackground"/>
+<Border>
+<Top style="1" color="-16777216"/>
+<Bottom style="1" color="-16777216"/>
+<Left style="1" color="-16777216"/>
+<Right style="1" color="-16777216"/>
+</Border>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="SimSun" style="1" size="64"/>
+<Background name="NullBackground"/>
+<Border>
+<Top style="1" color="-16777216"/>
+<Bottom style="1" color="-16777216"/>
+<Left style="1" color="-16777216"/>
+<Right style="1" color="-16777216"/>
+</Border>
+</Style>
+<Style imageLayout="1">
+<Format class="com.fr.base.CoreDecimalFormat">
+<![CDATA[#,##0.00]]></Format>
+<FRFont name="SimSun" style="0" size="64"/>
+<Background name="NullBackground"/>
+<Border>
+<Top style="1" color="-16777216"/>
+<Bottom style="1" color="-16777216"/>
+<Left style="1" color="-16777216"/>
+<Right style="1" color="-16777216"/>
+</Border>
+</Style>
+<Style textStyle="1" imageLayout="1">
+<FRFont name="SimSun" style="0" size="80"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+</StyleList>
+<DesignerVersion DesignerVersion="IAA"/>
+<PreviewType PreviewType="0"/>
+<TemplateID TemplateID="6400bf5d-267c-432b-b69b-197b4d89472f"/>
+</WorkBook>

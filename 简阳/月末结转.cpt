@@ -1,0 +1,809 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<WorkBook xmlVersion="20170715" releaseVersion="8.0.0">
+<TableDataMap>
+<TableData name="表单时间" class="com.fr.data.impl.DBTableData">
+<Parameters>
+<Parameter>
+<Attributes name="org"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+</Parameters>
+<Attributes maxMemRowCount="-1"/>
+<Connection class="com.fr.data.impl.NameDatabaseConnection">
+<DatabaseName>
+<![CDATA[REPORTJDBC]]></DatabaseName>
+</Connection>
+<Query>
+<![CDATA[SELECT case when max(def6) is null then "没有" else max(def6) end 最新凭证  FROM `bd_gxy` where 1=1
+and def2="table_purchas_sales"
+ ${if(len(org) ,"and 1=2","and def3 = '"+org+"' ")}
+
+
+
+
+ ]]></Query>
+</TableData>
+<TableData name="结账时间" class="com.fr.data.impl.DBTableData">
+<Parameters>
+<Parameter>
+<Attributes name="org"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+</Parameters>
+<Attributes maxMemRowCount="-1"/>
+<Connection class="com.fr.data.impl.NameDatabaseConnection">
+<DatabaseName>
+<![CDATA[REPORTJDBC]]></DatabaseName>
+</Connection>
+<Query>
+<![CDATA[SELECT max(def10) period FROM `bd_gxy` where 1=1
+and def2 = "bd_Accounting_closing"
+ ${if(len(org) ,"and 1=2","and def3 = '"+org+"' ")}
+]]></Query>
+</TableData>
+<TableData name="本次结账时间" class="com.fr.data.impl.DBTableData">
+<Parameters>
+<Parameter>
+<Attributes name="org"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+</Parameters>
+<Attributes maxMemRowCount="-1"/>
+<Connection class="com.fr.data.impl.NameDatabaseConnection">
+<DatabaseName>
+<![CDATA[REPORTJDBC]]></DatabaseName>
+</Connection>
+<Query>
+<![CDATA[SELECT min(def10) period FROM `bd_gxy` where 1=1
+and def2 = "table_purchas_sales"
+ ${if(len(org)=0 ,"and 1=2","and def3 = '"+org+"' ")}
+and (def8 is null or def8 = 'uncomplete')
+and def5 != "opening"
+]]></Query>
+</TableData>
+<TableData name="月余额" class="com.fr.data.impl.DBTableData">
+<Parameters>
+<Parameter>
+<Attributes name="org"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+</Parameters>
+<Attributes maxMemRowCount="-1"/>
+<Connection class="com.fr.data.impl.NameDatabaseConnection">
+<DatabaseName>
+<![CDATA[REPORTJDBC]]></DatabaseName>
+</Connection>
+<Query>
+<![CDATA[SELECT uuid() id,def3,def4,def5,def9,def10,sum(def51),sum(def52),sum(def53) FROM `bd_gxy`  where 1=1 
+and def2 = "table_purchas_sales"
+ ${if(len(org) ,"and 1=2","and def3 = '"+org+"' ")}
+group by def3,def4,def10,def5]]></Query>
+</TableData>
+<TableData name="结账时间判断" class="com.fr.data.impl.DBTableData">
+<Parameters>
+<Parameter>
+<Attributes name="org"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+</Parameters>
+<Attributes maxMemRowCount="-1"/>
+<Connection class="com.fr.data.impl.NameDatabaseConnection">
+<DatabaseName>
+<![CDATA[REPORTJDBC]]></DatabaseName>
+</Connection>
+<Query>
+<![CDATA[SELECT max(def10) period FROM `bd_gxy` where 1=1
+and def2 = "table_purchas_sales"
+ ${if(len(org)=0 ,"and 1=2","and def3 = '"+org+"' ")}
+and  def8 = 'complete'
+and def5 != "opening"
+]]></Query>
+</TableData>
+</TableDataMap>
+<ReportWebAttr>
+<ServerPrinter/>
+<WebWriteContent>
+<Listener event="writesuccess">
+<JavaScript class="com.fr.js.JavaScriptImpl">
+<Parameters/>
+<Content>
+<![CDATA[location.reload();
+]]></Content>
+</JavaScript>
+</Listener>
+<Listener event="afterload">
+<JavaScript class="com.fr.js.JavaScriptImpl">
+<Parameters/>
+<Content>
+<![CDATA[ $('.fr-btn-up').css('background','#ff0000');
+$('.fr-btn-up').css('border-radius','20px');
+$('.fr-btn-text').css('color','white');]]></Content>
+</JavaScript>
+</Listener>
+<ToolBars/>
+<SelectedColor/>
+<WebWrite SheetPosition="3"/>
+<RptLocation isShowAtLeft="false"/>
+<UnloadCheck/>
+<ShowWidgets/>
+<OtherAttr isAutoStash="false"/>
+</WebWriteContent>
+</ReportWebAttr>
+<Report class="com.fr.report.worksheet.WorkSheet" name="sheet1">
+<ReportPageAttr>
+<HR/>
+<FR/>
+<HC/>
+<FC/>
+</ReportPageAttr>
+<ColumnPrivilegeControl/>
+<RowPrivilegeControl/>
+<RowHeight defaultValue="723900">
+<![CDATA[2057400,1752600,1981200,876300,0,0,0,0,876300,723900,1905000,723900]]></RowHeight>
+<ColumnWidth defaultValue="2743200">
+<![CDATA[2743200,2743200,7658100,3962400,2743200,2743200,2743200,6972300,2743200,2743200,2743200]]></ColumnWidth>
+<CellElementList>
+<C c="0" r="0" cs="8" s="0">
+<O>
+<![CDATA[月末结转]]></O>
+<PrivilegeControl/>
+<Expand/>
+</C>
+<C c="0" r="1" cs="3" s="1">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=refvalue($aid, $tid, "org", $org, "name")]]></Attributes>
+</O>
+<PrivilegeControl/>
+<Expand/>
+</C>
+<C c="3" r="1" s="2">
+<PrivilegeControl/>
+<Expand/>
+</C>
+<C c="4" r="1" s="2">
+<PrivilegeControl/>
+<Expand/>
+</C>
+<C c="5" r="1" s="2">
+<PrivilegeControl/>
+<Expand/>
+</C>
+<C c="6" r="1" s="2">
+<PrivilegeControl/>
+<Expand/>
+</C>
+<C c="7" r="1" s="2">
+<PrivilegeControl/>
+<Expand/>
+</C>
+<C c="8" r="1" s="3">
+<PrivilegeControl/>
+<Expand/>
+</C>
+<C c="9" r="1" s="3">
+<PrivilegeControl/>
+<Expand/>
+</C>
+<C c="10" r="1" s="3">
+<PrivilegeControl/>
+<Expand/>
+</C>
+<C c="0" r="2" cs="2" s="1">
+<O>
+<![CDATA[最新凭证时间:]]></O>
+<PrivilegeControl/>
+<Expand/>
+</C>
+<C c="2" r="2" s="1">
+<O t="DSColumn">
+<Attributes dsName="表单时间" columnName="最新凭证"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<PrivilegeControl/>
+<Expand dir="0"/>
+</C>
+<C c="3" r="2" s="1">
+<PrivilegeControl/>
+<Expand/>
+</C>
+<C c="4" r="2" s="4">
+<PrivilegeControl/>
+<Expand/>
+</C>
+<C c="5" r="2" cs="2" s="1">
+<O>
+<![CDATA[最后结账时间]]></O>
+<PrivilegeControl/>
+<Expand/>
+</C>
+<C c="7" r="2" s="1">
+<O t="DSColumn">
+<Attributes dsName="结账时间" columnName="period"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<PrivilegeControl/>
+<Expand dir="0"/>
+</C>
+<C c="8" r="2">
+<PrivilegeControl/>
+<Expand/>
+</C>
+<C c="0" r="3" cs="2" s="1">
+<O>
+<![CDATA[本次结账期间]]></O>
+<PrivilegeControl/>
+<Expand/>
+</C>
+<C c="2" r="3" s="1">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=if(and(isnull(h3),isnull(f6)),h6,if(and(E7 = E6, E7 <= C3), E6, ""))]]></Attributes>
+</O>
+<PrivilegeControl/>
+<Expand/>
+</C>
+<C c="3" r="3" s="4">
+<PrivilegeControl/>
+<Expand/>
+</C>
+<C c="4" r="3" s="4">
+<PrivilegeControl/>
+<Expand/>
+</C>
+<C c="5" r="3" s="4">
+<PrivilegeControl/>
+<Expand/>
+</C>
+<C c="6" r="3" s="4">
+<PrivilegeControl/>
+<Expand/>
+</C>
+<C c="7" r="3" s="4">
+<PrivilegeControl/>
+<Expand/>
+</C>
+<C c="8" r="3">
+<PrivilegeControl/>
+<Expand/>
+</C>
+<C c="1" r="4">
+<PrivilegeControl/>
+<Expand/>
+</C>
+<C c="4" r="5">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=LEFT(MONTHDELTA(H3 + "-01", 1), 7)]]></Attributes>
+</O>
+<PrivilegeControl/>
+<Expand/>
+</C>
+<C c="5" r="5">
+<O t="DSColumn">
+<Attributes dsName="结账时间判断" columnName="period"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<PrivilegeControl/>
+<Expand dir="0"/>
+</C>
+<C c="7" r="5">
+<O t="DSColumn">
+<Attributes dsName="本次结账时间" columnName="period"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<PrivilegeControl/>
+<Expand dir="0"/>
+</C>
+<C c="0" r="6">
+<PrivilegeControl/>
+<Expand/>
+</C>
+<C c="1" r="6">
+<PrivilegeControl/>
+<Expand/>
+</C>
+<C c="2" r="6">
+<PrivilegeControl/>
+<Expand/>
+</C>
+<C c="3" r="6">
+<PrivilegeControl/>
+<Expand/>
+</C>
+<C c="4" r="6">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=LEFT(MONTHDELTA(F6 + "-01", 1), 7)]]></Attributes>
+</O>
+<PrivilegeControl/>
+<Expand/>
+</C>
+<C c="5" r="6">
+<PrivilegeControl/>
+<Expand/>
+</C>
+<C c="6" r="6">
+<PrivilegeControl/>
+<Expand/>
+</C>
+<C c="7" r="6">
+<PrivilegeControl/>
+<Expand/>
+</C>
+<C c="8" r="6">
+<PrivilegeControl/>
+<Expand/>
+</C>
+<C c="9" r="6">
+<PrivilegeControl/>
+<Expand/>
+</C>
+<C c="10" r="6">
+<PrivilegeControl/>
+<Expand/>
+</C>
+<C c="1" r="7" s="5">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=月余额.select(id, DEF10 = C4)]]></Attributes>
+</O>
+<PrivilegeControl/>
+<Expand dir="0"/>
+</C>
+<C c="2" r="7">
+<O t="DSColumn">
+<Attributes dsName="月余额" columnName="def3"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<PrivilegeControl/>
+<Expand dir="0"/>
+</C>
+<C c="3" r="7">
+<O t="DSColumn">
+<Attributes dsName="月余额" columnName="def4"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<PrivilegeControl/>
+<Expand dir="0"/>
+</C>
+<C c="4" r="7">
+<O t="DSColumn">
+<Attributes dsName="月余额" columnName="def5"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<PrivilegeControl/>
+<Expand dir="0"/>
+</C>
+<C c="5" r="7">
+<O t="DSColumn">
+<Attributes dsName="月余额" columnName="def9"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<PrivilegeControl/>
+<Expand dir="0"/>
+</C>
+<C c="6" r="7">
+<O t="DSColumn">
+<Attributes dsName="月余额" columnName="def10"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<PrivilegeControl/>
+<Expand dir="0"/>
+</C>
+<C c="7" r="7">
+<O t="DSColumn">
+<Attributes dsName="月余额" columnName="sum(def51)"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<PrivilegeControl/>
+<Expand dir="0"/>
+</C>
+<C c="8" r="7">
+<O t="DSColumn">
+<Attributes dsName="月余额" columnName="sum(def53)"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<PrivilegeControl/>
+<Expand dir="0"/>
+</C>
+<C c="9" r="7">
+<O t="DSColumn">
+<Attributes dsName="月余额" columnName="sum(def52)"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<PrivilegeControl/>
+<Expand dir="0"/>
+</C>
+<C c="7" r="8" s="6">
+<PrivilegeControl/>
+<Widget class="com.fr.form.ui.FreeButton">
+<Listener event="click">
+<JavaScript class="com.fr.js.JavaScriptImpl">
+<Parameters/>
+<Content>
+<![CDATA[
+if(confirm("确认结账"))   //弹出确认删除对话框  
+{
+  setTimeout(function() { 
+  	contentPane.writeReport();
+    }, 2000);
+  return true;    //点击确定时，返回值为true，执行如上操作。
+}
+else
+{
+   return false; //点击取消时，返回值为false，不执行操作。
+}]]></Content>
+</JavaScript>
+</Listener>
+<WidgetAttr description="">
+<PrivilegeControl/>
+</WidgetAttr>
+<Text>
+<![CDATA[确认结转]]></Text>
+</Widget>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.FormulaCondition">
+<Formula>
+<![CDATA[len(C4) = 0]]></Formula>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.WidgetHighlightAction"/>
+</Highlight>
+</HighlightList>
+<Expand/>
+</C>
+<C c="0" r="9">
+<PrivilegeControl/>
+<Expand/>
+</C>
+<C c="1" r="9">
+<PrivilegeControl/>
+<Expand/>
+</C>
+<C c="2" r="9">
+<PrivilegeControl/>
+<Expand/>
+</C>
+<C c="3" r="9">
+<PrivilegeControl/>
+<Expand/>
+</C>
+<C c="4" r="9">
+<PrivilegeControl/>
+<Expand/>
+</C>
+<C c="5" r="9">
+<PrivilegeControl/>
+<Expand/>
+</C>
+<C c="6" r="9">
+<PrivilegeControl/>
+<Expand/>
+</C>
+<C c="7" r="9">
+<PrivilegeControl/>
+<Expand/>
+</C>
+<C c="8" r="9">
+<PrivilegeControl/>
+<Expand/>
+</C>
+<C c="9" r="9">
+<PrivilegeControl/>
+<Expand/>
+</C>
+<C c="10" r="9">
+<PrivilegeControl/>
+<Expand/>
+</C>
+</CellElementList>
+<ReportAttrSet>
+<ReportSettings headerHeight="0" footerHeight="0">
+<PaperSetting/>
+</ReportSettings>
+<Header reportPageType="0">
+<Background name="NullBackground"/>
+<LeftList/>
+<CenterList/>
+<RightList/>
+</Header>
+<Footer reportPageType="0">
+<Background name="NullBackground"/>
+<LeftList/>
+<CenterList/>
+<RightList/>
+</Footer>
+</ReportAttrSet>
+<ReportWriteAttr>
+<SubmitVisitor class="com.fr.report.write.BuiltInSQLSubmiter">
+<Name>
+<![CDATA[结转标记]]></Name>
+<Attributes dsName="REPORTJDBC"/>
+<DMLConfig class="com.fr.write.config.IntelliDMLConfig">
+<Table schema="" name="bd_gxy"/>
+<ColumnConfig name="def2" isKey="true" skipUnmodified="false">
+<O>
+<![CDATA[table_purchas_sales]]></O>
+</ColumnConfig>
+<ColumnConfig name="def3" isKey="true" skipUnmodified="false">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$org]]></Attributes>
+</O>
+</ColumnConfig>
+<ColumnConfig name="def8" isKey="false" skipUnmodified="false">
+<O>
+<![CDATA[complete]]></O>
+</ColumnConfig>
+<ColumnConfig name="def10" isKey="true" skipUnmodified="false">
+<ColumnRow column="2" row="3"/>
+</ColumnConfig>
+<Condition class="com.fr.data.condition.ListCondition"/>
+</DMLConfig>
+</SubmitVisitor>
+<SubmitVisitor class="com.fr.report.write.BuiltInSQLSubmiter">
+<Name>
+<![CDATA[结转记录]]></Name>
+<Attributes dsName="REPORTJDBC"/>
+<DMLConfig class="com.fr.write.config.IntelliDMLConfig">
+<Table schema="" name="bd_gxy"/>
+<ColumnConfig name="def1" isKey="true" skipUnmodified="false">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=uuid()]]></Attributes>
+</O>
+</ColumnConfig>
+<ColumnConfig name="def2" isKey="false" skipUnmodified="false">
+<O>
+<![CDATA[bd_Accounting_closing]]></O>
+</ColumnConfig>
+<ColumnConfig name="def3" isKey="false" skipUnmodified="false">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$org]]></Attributes>
+</O>
+</ColumnConfig>
+<ColumnConfig name="def9" isKey="false" skipUnmodified="false">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=refvalue($aid, $tid, "org", $org, "code")]]></Attributes>
+</O>
+</ColumnConfig>
+<ColumnConfig name="def10" isKey="false" skipUnmodified="false">
+<ColumnRow column="2" row="3"/>
+</ColumnConfig>
+<ColumnConfig name="def6" isKey="false" skipUnmodified="false">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=now()]]></Attributes>
+</O>
+</ColumnConfig>
+<Condition class="com.fr.data.condition.ListCondition"/>
+</DMLConfig>
+</SubmitVisitor>
+<SubmitVisitor class="com.fr.report.write.BuiltInSQLSubmiter">
+<Name>
+<![CDATA[余额填报]]></Name>
+<Attributes dsName="REPORTJDBC"/>
+<DMLConfig class="com.fr.write.config.IntelliDMLConfig">
+<Table schema="" name="bd_gxy"/>
+<ColumnConfig name="def1" isKey="true" skipUnmodified="false">
+<ColumnRow column="1" row="7"/>
+</ColumnConfig>
+<ColumnConfig name="def2" isKey="false" skipUnmodified="false">
+<O>
+<![CDATA[fi_balance_material]]></O>
+</ColumnConfig>
+<ColumnConfig name="def3" isKey="false" skipUnmodified="false">
+<ColumnRow column="2" row="7"/>
+</ColumnConfig>
+<ColumnConfig name="def4" isKey="false" skipUnmodified="false">
+<ColumnRow column="3" row="7"/>
+</ColumnConfig>
+<ColumnConfig name="def10" isKey="false" skipUnmodified="false">
+<ColumnRow column="6" row="7"/>
+</ColumnConfig>
+<ColumnConfig name="def51" isKey="false" skipUnmodified="false">
+<ColumnRow column="7" row="7"/>
+</ColumnConfig>
+<ColumnConfig name="def52" isKey="false" skipUnmodified="false">
+<ColumnRow column="9" row="7"/>
+</ColumnConfig>
+<ColumnConfig name="def53" isKey="false" skipUnmodified="false">
+<ColumnRow column="8" row="7"/>
+</ColumnConfig>
+<ColumnConfig name="def11" isKey="false" skipUnmodified="false">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=now()]]></Attributes>
+</O>
+</ColumnConfig>
+<ColumnConfig name="def5" isKey="false" skipUnmodified="false">
+<ColumnRow column="4" row="7"/>
+</ColumnConfig>
+<Condition class="com.fr.data.condition.ListCondition"/>
+</DMLConfig>
+</SubmitVisitor>
+</ReportWriteAttr>
+<PrivilegeControl/>
+</Report>
+<ReportParameterAttr>
+<Attributes showWindow="true" delayPlaying="false" windowPosition="1" align="0"/>
+<PWTitle>
+<![CDATA[参数]]></PWTitle>
+<ParameterUI class="com.fr.form.main.parameter.FormParameterUI">
+<Parameters/>
+<Layout class="com.fr.form.ui.container.WParameterLayout">
+<WidgetName name="para"/>
+<WidgetAttr description="">
+<PrivilegeControl/>
+</WidgetAttr>
+<Margin top="0" left="0" bottom="0" right="0"/>
+<Border>
+<border style="0" color="-723724" borderRadius="0" type="0" borderStyle="0"/>
+<WidgetTitle>
+<O>
+<![CDATA[新建标题]]></O>
+<FRFont name="SimSun" style="0" size="72"/>
+<Position pos="0"/>
+</WidgetTitle>
+<Alpha alpha="1.0"/>
+</Border>
+<Background name="ColorBackground" color="-1118482"/>
+<LCAttr vgap="0" hgap="0" compInterval="0"/>
+<Widget class="com.fr.form.ui.container.WAbsoluteLayout$BoundsWidget">
+<InnerWidget class="com.fr.form.ui.TextEditor">
+<WidgetName name="org"/>
+<WidgetAttr invisible="true" description="">
+<PrivilegeControl/>
+</WidgetAttr>
+<TextAttr/>
+<widgetValue>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=INDEXOFARRAY(reflist($aid, $tid, "org", $userid, "reforg"), 1)]]></Attributes>
+</O>
+</widgetValue>
+</InnerWidget>
+<BoundsAttr x="130" y="25" width="80" height="21"/>
+</Widget>
+<Widget class="com.fr.form.ui.container.WAbsoluteLayout$BoundsWidget">
+<InnerWidget class="com.fr.form.ui.Label">
+<WidgetName name="Labelorg"/>
+<WidgetAttr invisible="true" description="">
+<PrivilegeControl/>
+</WidgetAttr>
+<widgetValue>
+<O>
+<![CDATA[org:]]></O>
+</widgetValue>
+<LabelAttr verticalcenter="true" textalign="0" autoline="true"/>
+<FRFont name="SimSun" style="0" size="72"/>
+<border style="0" color="-723724"/>
+</InnerWidget>
+<BoundsAttr x="50" y="25" width="80" height="21"/>
+</Widget>
+<Sorted sorted="false"/>
+<MobileWidgetList>
+<Widget widgetName="org"/>
+</MobileWidgetList>
+<Display display="true"/>
+<DelayDisplayContent delay="false"/>
+<Position position="0"/>
+<Design_Width design_width="960"/>
+<NameTagModified/>
+<WidgetNameTagMap>
+<NameTag name="org" tag="org:"/>
+</WidgetNameTagMap>
+</Layout>
+<DesignAttr width="960" height="25"/>
+</ParameterUI>
+<Parameter>
+<Attributes name="org"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="time"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+</ReportParameterAttr>
+<StyleList>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="楷体" style="1" size="120" foreground="-1"/>
+<Background name="ColorBackground" color="-16744320"/>
+<Border/>
+</Style>
+<Style imageLayout="1">
+<FRFont name="楷体" style="1" size="96" foreground="-1"/>
+<Background name="ColorBackground" color="-13382452"/>
+<Border>
+<Top color="-13408513"/>
+<Bottom color="-13408513"/>
+<Left color="-13408513"/>
+<Right color="-13408513"/>
+</Border>
+</Style>
+<Style imageLayout="1">
+<FRFont name="楷体" style="1" size="96"/>
+<Background name="ColorBackground" color="-13382452"/>
+<Border>
+<Top color="-13408513"/>
+<Bottom color="-13408513"/>
+<Left color="-13408513"/>
+<Right color="-13408513"/>
+</Border>
+</Style>
+<Style imageLayout="1">
+<FRFont name="楷体" style="1" size="112"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style imageLayout="1">
+<FRFont name="SimSun" style="0" size="96"/>
+<Background name="ColorBackground" color="-13382452"/>
+<Border>
+<Top color="-13408513"/>
+<Bottom color="-13408513"/>
+<Left color="-13408513"/>
+<Right color="-13408513"/>
+</Border>
+</Style>
+<Style imageLayout="1">
+<FRFont name="SimSun" style="0" size="72"/>
+<Background name="NullBackground"/>
+<Border>
+<Top style="1"/>
+<Bottom style="1"/>
+<Left style="1"/>
+<Right style="1"/>
+</Border>
+</Style>
+<Style imageLayout="1">
+<FRFont name="楷体" style="1" size="96" foreground="-1"/>
+<Background name="ColorBackground" color="-1"/>
+<Border>
+<Top color="-13408513"/>
+<Bottom color="-13408513"/>
+<Left color="-13408513"/>
+<Right color="-13408513"/>
+</Border>
+</Style>
+</StyleList>
+<DesignerVersion DesignerVersion="IAA"/>
+<PreviewType PreviewType="1"/>
+<TemplateID TemplateID="18c5568b-f946-4941-a592-fd70afd51225"/>
+</WorkBook>
