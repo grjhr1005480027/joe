@@ -3124,9 +3124,9 @@ U)SdG'2BgpMX:Y+[#88oUag,_4Dp)/N(OhEs]Aiio2^Cr"KR8S(c7QXMq#pDProETIq$-b<Z;
 <PrivilegeControl/>
 <Expand/>
 </C>
-<C c="6" r="23" s="15">
+<C c="6" r="23" s="17">
 <O>
-<![CDATA[单品进销存汇总分析报表]]></O>
+<![CDATA[反结转]]></O>
 <PrivilegeControl/>
 <NameJavaScriptGroup>
 <NameJavaScript name="网页链接1">
@@ -3145,7 +3145,7 @@ U)SdG'2BgpMX:Y+[#88oUag,_4Dp)/N(OhEs]Aiio2^Cr"KR8S(c7QXMq#pDProETIq$-b<Z;
 <![CDATA[_blank]]></TargetFrame>
 <Features width="600" height="400"/>
 <URL>
-<![CDATA[https://acc.yonyoucloud.com/fireport/client/#/view/v510815_gather_single/yonyoufi/vw7foxf7/fill=true&]]></URL>
+<![CDATA[https://acc.yonyoucloud.com/fireport/client/#/view/v510185_unclosing/yonyoufi/vw7foxf7/fill=true&]]></URL>
 </JavaScript>
 </JavaScript>
 </NameJavaScript>
@@ -3228,8 +3228,32 @@ U)SdG'2BgpMX:Y+[#88oUag,_4Dp)/N(OhEs]Aiio2^Cr"KR8S(c7QXMq#pDProETIq$-b<Z;
 <PrivilegeControl/>
 <Expand/>
 </C>
-<C c="2" r="25" s="12">
+<C c="2" r="25" s="15">
+<O>
+<![CDATA[单品进销存汇总分析报表]]></O>
 <PrivilegeControl/>
+<NameJavaScriptGroup>
+<NameJavaScript name="网页链接1">
+<JavaScript class="com.fr.js.WebHyperlink">
+<JavaScript class="com.fr.js.WebHyperlink">
+<Parameters>
+<Parameter>
+<Attributes name="userid"/>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=$userid]]></Attributes>
+</O>
+</Parameter>
+</Parameters>
+<TargetFrame>
+<![CDATA[_blank]]></TargetFrame>
+<Features width="600" height="400"/>
+<URL>
+<![CDATA[https://acc.yonyoucloud.com/fireport/client/#/view/v510815_gather_single/yonyoufi/vw7foxf7/fill=true&]]></URL>
+</JavaScript>
+</JavaScript>
+</NameJavaScript>
+</NameJavaScriptGroup>
 <Expand/>
 </C>
 <C c="3" r="25" s="10">
@@ -3456,6 +3480,11 @@ U)SdG'2BgpMX:Y+[#88oUag,_4Dp)/N(OhEs]Aiio2^Cr"KR8S(c7QXMq#pDProETIq$-b<Z;
 <Style horizontal_alignment="0" imageLayout="1">
 <FRFont name="SimSun" style="0" size="112"/>
 <Background name="ColorBackground" color="-1052945"/>
+<Border/>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="楷体" style="0" size="112" foreground="-16776961" underline="1"/>
+<Background name="ColorBackground" color="-1"/>
 <Border/>
 </Style>
 </StyleList>
