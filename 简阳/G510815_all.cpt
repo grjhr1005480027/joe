@@ -14,34 +14,6 @@
 <ReportWebAttr>
 <ServerPrinter/>
 <WebPageContent>
-<Listener event="afterload">
-<JavaScript class="com.fr.js.JavaScriptImpl">
-<Parameters/>
-<Content>
-<![CDATA[//鼠标经过
-$(".x-table tr").mousemove(function() {
-//所在行背景色:红色
-
-//所在行单元格字体:18px
-        $(this).find("td").css("font-size","18px");
-});
-//鼠标点击
-$(".x-table tr").mousedown(function() {
-//所在行背景色:黄色
-        $(this).css("background-color","yellow");
-//所在行单元格字体:18px        
-        $(this).find("td").css("font-size","18px");
-});
-//鼠标离开
-$(".x-table tr").mouseout(function() {
-//所在行背景色:白色
-        $(this).css("background-color","white");
-//所在行单元格字体:12px 
-        $(this).find("td").css("font-size","12px");
-});
-]]></Content>
-</JavaScript>
-</Listener>
 <ToolBars>
 <ToolBarManager>
 <Location>
@@ -3124,7 +3096,7 @@ U)SdG'2BgpMX:Y+[#88oUag,_4Dp)/N(OhEs]Aiio2^Cr"KR8S(c7QXMq#pDProETIq$-b<Z;
 <PrivilegeControl/>
 <Expand/>
 </C>
-<C c="6" r="23" s="15">
+<C c="6" r="23" s="17">
 <O>
 <![CDATA[反结转]]></O>
 <PrivilegeControl/>
@@ -3145,7 +3117,7 @@ U)SdG'2BgpMX:Y+[#88oUag,_4Dp)/N(OhEs]Aiio2^Cr"KR8S(c7QXMq#pDProETIq$-b<Z;
 <![CDATA[_blank]]></TargetFrame>
 <Features width="600" height="400"/>
 <URL>
-<![CDATA[https://acc.yonyoucloud.com/fireport/client/#/view/v510185_unclosing/yonyoufi/vw7foxf7/fill=true&]]></URL>
+<![CDATA[https://acc.yonyoucloud.com/fireport/client/#/view/v510185_unsettle/yonyoufi/vw7foxf7/fill=true&]]></URL>
 </JavaScript>
 </JavaScript>
 </NameJavaScript>
@@ -3455,12 +3427,22 @@ U)SdG'2BgpMX:Y+[#88oUag,_4Dp)/N(OhEs]Aiio2^Cr"KR8S(c7QXMq#pDProETIq$-b<Z;
 <Style horizontal_alignment="0" imageLayout="1">
 <FRFont name="SimSun" style="1" size="192"/>
 <Background name="ColorBackground" color="-1052945"/>
-<Border/>
+<Border>
+<Top color="-16777216"/>
+<Bottom color="-16777216"/>
+<Left color="-16777216"/>
+<Right color="-16777216"/>
+</Border>
 </Style>
 <Style horizontal_alignment="0" imageLayout="1">
 <FRFont name="SimSun" style="0" size="72"/>
 <Background name="ColorBackground" color="-1052945"/>
-<Border/>
+<Border>
+<Top color="-16777216"/>
+<Bottom color="-16777216"/>
+<Left color="-16777216"/>
+<Right color="-16777216"/>
+</Border>
 </Style>
 <Style imageLayout="1">
 <FRFont name="SimSun" style="0" size="112"/>
@@ -3475,15 +3457,35 @@ U)SdG'2BgpMX:Y+[#88oUag,_4Dp)/N(OhEs]Aiio2^Cr"KR8S(c7QXMq#pDProETIq$-b<Z;
 <Style horizontal_alignment="0" imageLayout="1">
 <FRFont name="楷体" style="0" size="112"/>
 <Background name="ColorBackground" color="-1"/>
-<Border/>
+<Border>
+<Top color="-16777216"/>
+<Bottom color="-16777216"/>
+<Left color="-16777216"/>
+<Right color="-16777216"/>
+</Border>
 </Style>
 <Style horizontal_alignment="0" imageLayout="1">
 <FRFont name="SimSun" style="0" size="112"/>
 <Background name="ColorBackground" color="-1052945"/>
-<Border/>
+<Border>
+<Top color="-16777216"/>
+<Bottom color="-16777216"/>
+<Left color="-16777216"/>
+<Right color="-16777216"/>
+</Border>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="楷体" style="0" size="112" foreground="-16776961" underline="1"/>
+<Background name="ColorBackground" color="-1"/>
+<Border>
+<Top color="-16777216"/>
+<Bottom color="-16777216"/>
+<Left color="-16777216"/>
+<Right color="-16777216"/>
+</Border>
 </Style>
 </StyleList>
 <DesignerVersion DesignerVersion="IAA"/>
 <PreviewType PreviewType="0"/>
-<TemplateID TemplateID="e0793276-8ca3-4251-bcbc-06d616a3e84f"/>
+<TemplateID TemplateID="115b5e5f-196d-4fbf-9768-90255230f090"/>
 </WorkBook>
