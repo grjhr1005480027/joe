@@ -21,14 +21,14 @@ and right(code,1) = "v"	]]></Query>
 <![CDATA[REPORTJDBC]]></DatabaseName>
 </Connection>
 <Query>
-<![CDATA[SELECT gxy.def21 项目名称,sum(credit_org) 资金总量
-FROM `rpt_ps_voucher`vou left join bd_accbook ack on vou.accbook = ack.id  left join  fi_auxiliary aux on vou.auxiliary = aux.id left join bd_gxy gxy on aux.def2 = gxy.def1
+<![CDATA[SELECT aux.def2 项目名称,sum(credit_org) 资金总量
+FROM `rpt_ps_voucher`vou left join bd_accbook ack on vou.accbook = ack.id left join bd_accsubject acj on vou.accsubject  = acj.id  left join  fi_auxiliary aux on vou.auxiliary = aux.id 
 
 where 1=1 
 and ack.code like "V513434%"
 and right(ack.code,1)="v"
 and aux.def2 is not null
-
+and acj.code  = "24101"
 group by aux.def2
 ]]></Query>
 </TableData>
@@ -40,14 +40,14 @@ group by aux.def2
 <![CDATA[REPORTJDBC]]></DatabaseName>
 </Connection>
 <Query>
-<![CDATA[SELECT gxy.def21 项目名称,sum(credit_org) 资金总量
-FROM `rpt_ps_voucher`vou left join bd_accbook ack on vou.accbook = ack.id  left join  fi_auxiliary aux on vou.auxiliary = aux.id left join bd_gxy gxy on aux.def2 = gxy.def1
+<![CDATA[SELECT aux.def2 项目名称,sum(credit_org) 资金总量
+FROM `rpt_ps_voucher`vou left join bd_accbook ack on vou.accbook = ack.id left join bd_accsubject acj on vou.accsubject  = acj.id  left join  fi_auxiliary aux on vou.auxiliary = aux.id 
 
 where 1=1 
 and ack.code like "V513434%"
 and right(ack.code,1)="Z"
 and aux.def2 is not null
-
+and acj.code  = "2110102"
 group by aux.def2
 
 ]]></Query>
@@ -4784,7 +4784,12 @@ Ob6Z)s"%).U8"9"IgkRAVR^\kjC^8aNj#?Wr<o?PhC2S[Vub'+fb3!BU[Ug76bE@HSjt7eu:
 </Plot>
 <ChartDefinition>
 <OneValueCDDefinition seriesName="项目名称" valueName="资金总量" function="com.fr.data.util.function.NoneFunction">
-<Top topCate="-1" topValue="-1" isDiscardOtherCate="false" isDiscardOtherSeries="false" isDiscardNullCate="false" isDiscardNullSeries="false"/>
+<Top topCate="-1" topValue="-1" isDiscardOtherCate="false" isDiscardOtherSeries="false" isDiscardNullCate="false" isDiscardNullSeries="false">
+<SeriesPresent class="com.fr.base.present.FormulaPresent">
+<Content>
+<![CDATA[=refvalue($aid,$tid,"project",$$$,"name")]]></Content>
+</SeriesPresent>
+</Top>
 <TableData class="com.fr.data.impl.NameTableData">
 <Name>
 <![CDATA[专合资金总量]]></Name>
@@ -5327,12 +5332,17 @@ Ob6Z)s"%).U8"9"IgkRAVR^\kjC^8aNj#?Wr<o?PhC2S[Vub'+fb3!BU[Ug76bE@HSjt7eu:
 </Plot>
 <ChartDefinition>
 <OneValueCDDefinition seriesName="项目名称" valueName="资金总量" function="com.fr.data.util.function.NoneFunction">
-<Top topCate="-1" topValue="-1" isDiscardOtherCate="false" isDiscardOtherSeries="false" isDiscardNullCate="false" isDiscardNullSeries="false"/>
+<Top topCate="-1" topValue="-1" isDiscardOtherCate="false" isDiscardOtherSeries="false" isDiscardNullCate="false" isDiscardNullSeries="false">
+<SeriesPresent class="com.fr.base.present.FormulaPresent">
+<Content>
+<![CDATA[=refvalue($aid,$tid,"project",$$$,"name")]]></Content>
+</SeriesPresent>
+</Top>
 <TableData class="com.fr.data.impl.NameTableData">
 <Name>
 <![CDATA[专项资金总量]]></Name>
 </TableData>
-<CategoryName value=""/>
+<CategoryName value="无"/>
 </OneValueCDDefinition>
 </ChartDefinition>
 </Chart>
