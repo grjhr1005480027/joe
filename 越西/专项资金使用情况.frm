@@ -10,10 +10,11 @@
 </Connection>
 <Query>
 <![CDATA[SELECT left(ack.code,10) 项目代码,concat(left(ack.code,10),"000") 名称,sum(credit_org)/10000 资金总量,'系列'
-FROM `rpt_ps_voucher`vou left join bd_accbook ack on vou.accbook = ack.id  left join  fi_auxiliary aux on vou.auxiliary = aux.id left join bd_gxy gxy on aux.def2 = gxy.def1
+FROM `rpt_ps_voucher`vou left join bd_accbook ack on vou.accbook = ack.id  left join  fi_auxiliary aux on vou.auxiliary = aux.id left join bd_accsubject acj on   vou.accsubject = acj.id left join bd_gxy gxy on aux.def2 = gxy.def1
 where 1=1 
 and ack.code like "V513434%"
-and right(ack.code,1)="Z"
+and right(ack.code,1)="v"
+and acj.code  = "24101"
 and aux.def2 = "55e49a8c-9156-4601-ac25-f559e6a187c2"
 group by 项目代码]]></Query>
 </TableData>
@@ -31,11 +32,12 @@ group by 项目代码]]></Query>
 <![CDATA[REPORTJDBC]]></DatabaseName>
 </Connection>
 <Query>
-<![CDATA[SELECT NAME 项目代码,sum(credit_org) 资金总量
-FROM `rpt_ps_voucher`vou left join bd_accbook ack on vou.accbook = ack.id  left join  fi_auxiliary aux on vou.auxiliary = aux.id left join bd_gxy gxy on aux.def2 = gxy.def1
+<![CDATA[SELECT ack.name 项目代码,sum(credit_org) 资金总量
+FROM `rpt_ps_voucher`vou left join bd_accbook ack on vou.accbook = ack.id  left join  fi_auxiliary aux on vou.auxiliary = aux.id left join bd_accsubject acj on acj.id=vou.accsubject left join bd_gxy gxy on aux.def2 = gxy.def1
 where 1=1 
     ${if(len(name)=0 ,"and 1=2","and ack.code like '"+left(name,10)+"%'")}
-and right(ack.code,1)="Z"
+and right(ack.code,1)="v"
+and acj.code  = "24101"
 and aux.def2 = "55e49a8c-9156-4601-ac25-f559e6a187c2"
 group by 项目代码]]></Query>
 </TableData>
