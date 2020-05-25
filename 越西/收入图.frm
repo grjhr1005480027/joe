@@ -940,7 +940,7 @@
 <Parameter>
 <Attributes name="type"/>
 <O>
-<![CDATA[收入]]></O>
+<![CDATA[支出]]></O>
 </Parameter>
 </Parameters>
 <TargetFrame>
